@@ -1,0 +1,7 @@
+{
+  "name": "fiza-collection",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
