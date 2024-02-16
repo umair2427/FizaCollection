@@ -1,0 +1,96 @@
+<div>
+  <form [formGroup]="thirdFormGroup">
+    <div class="w-full">
+      <mat-form-field class="w-full">
+        <mat-label>Email Address</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+    </div>
+    <div class="w-full">
+      <mat-form-field class="w-1/2">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+      <mat-form-field class="pl-2 w-1/2">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+    </div>
+    <div class="w-full">
+      <mat-form-field class="w-full">
+        <mat-label>Street Address</mat-label>
+        <input matInput formControlName="address" />
+      </mat-form-field>
+    </div>
+    <div class="w-full">
+      <mat-form-field class="w-1/2">
+        <mat-label>Country</mat-label>
+        <select
+          formControlName="country"
+          matNativeControl
+          id="country"
+          (change)="onCountryChange()"
+        >
+          <option *ngFor="let country of countries" [value]="country.isoCode">
+            {{ country.flag }}&nbsp;&nbsp;{{ country.name }}
+          </option>
+        </select>
+      </mat-form-field>
+
+      <mat-form-field class="pl-2 w-1/2">
+        <mat-label>State/Province</mat-label>
+        <select
+          formControlName="state"
+          matNativeControl
+          id="state"
+          (change)="onStateChange()"
+        >
+          <option *ngFor="let state of states" [value]="state.isoCode">
+            {{ state.name }}
+          </option>
+        </select>
+      </mat-form-field>
+    </div>
+    <div class="w-full">
+      <mat-form-field class="w-1/2">
+        <mat-label>-- Select City --</mat-label>
+        <select
+          formControlName="city"
+          matNativeControl
+          id="city"
+          #city
+          (change)="onCityChange()"
+        >
+          <option *ngFor="let city of cities" [value]="city.isoCode">
+            {{ city.name }}
+          </option>
+        </select>
+      </mat-form-field>
+
+      <mat-form-field class="pl-2 w-1/2">
+        <mat-label>Zip/Postal Code</mat-label>
+        <input matInput formControlName="zipCode" />
+      </mat-form-field>
+    </div>
+    <div class="w-full">
+      <mat-form-field>
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" />
+      </mat-form-field>
+    </div>
+    <div class="text-end">
+      <button
+        type="button"
+        class="bg-zinc-600 text-white px-10 py-3 mx-2 transition hover:bg-zinc-500 duration-300"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="bg-zinc-600 text-white px-10 py-3 transition hover:bg-zinc-500 duration-300"
+      >
+        Update
+      </button>
+    </div>
+  </form>
+</div>

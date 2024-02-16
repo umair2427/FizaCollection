@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" (click)="closeAuthDialog()" viewBox="0 0 20 20" fill="currentColor"
+  class="w-5 h-5 absolute top-2 right-3 cursor-pointer">
+  <path
+    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+</svg>
+<div class="m-auto w-3/4 mt-5">
+  <h1 class="text-2xl font-bold text-zinc-600 text-center">Sign in</h1>
+  <form [formGroup]="loginForm" (ngSubmit)="formSubmit()">
+    <div class="p-2">
+      <label class="block text-lg font-bold text-zinc-500">Email<span class="text-red-500">*</span></label>
+      <input type="email" placeholder="Enter your email" formControlName="email"
+        class="w-full focus:outline-none border border-zinc-400 px-3 text-sm py-2 placeholder-zinc-500 rounded-sm" />
+      <div *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)" class="text-xs text-red-500">
+        <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+      </div>
+      <div *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)" class="text-xs text-red-500">
+        <div *ngIf="f['email'].errors?.['email']">
+          Please enter a valid email address.
+        </div>
+      </div>
+    </div>
+    <div class="p-2 relative">
+      <label class="block text-lg font-bold text-zinc-500">Password<span class="text-red-500">*</span></label>
+      <input [type]="ismyTextFieldType ? 'text' : 'password'" formControlName="password"
+        placeholder="Enter your password"
+        class="w-full focus:outline-none border border-zinc-400 px-3 text-sm py-2 placeholder-zinc-500 rounded-sm" />
+      <ion-icon [name]="ismyTextFieldType ? 'eye-off' : 'eye'"
+        class="text-zinc-500 text-lg absolute top-11 right-5 cursor-pointer"
+        (click)="togglemyPasswordFieldType()"></ion-icon>
+      <div *ngIf="
+          f['password'].invalid &&
+          (f['password'].dirty || f['password'].touched)
+        " class="text-xs text-red-500">
+        <div *ngIf="f['password'].errors?.['required']">
+          Password is required.
+        </div>
+      </div>
+    </div>
+    <div class="text-end px-1">
+      <a (click)="navigateToForgotPassword()" class="text-zinc-600 font-sans cursor-pointer hover:text-zinc-500">Forget
+        password?</a>
+    </div>
+    <div class="w-full p-2">
+      <button type="submit" [disabled]="loginForm.invalid || (isLoading$ | async)"
+        class="bg-zinc-600 text-white font-bold py-2 w-full hover:bg-zinc-500 flex items-center justify-center">
+        <span class="mr-2">Login</span>
+        <ion-spinner class="text-white" *ngIf="(isLoading$ | async)" name="crescent"></ion-spinner>
+      </button>
+    </div>
+    <div class="text-center px-1 mb-5">
+      <span class="text-zinc-600 font-sans">Don't have an account?</span>
+      <a (click)="openDialogRegister()" class="text-zinc-600 font-bold cursor-pointer hover:text-zinc-500">Register</a>
+    </div>
+  </form>
+</div>

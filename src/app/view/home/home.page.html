@@ -1,0 +1,60 @@
+<ion-header>
+  <app-header></app-header>
+</ion-header>
+<ion-content>
+  <div class="relative h-[600px] bg-[url('https://static.wixstatic.com/media/84770f_b5b78cd83b6342199b7370a2ba6b9e06.jpg/v1/fill/w_1349,h_601,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/84770f_b5b78cd83b6342199b7370a2ba6b9e06.jpg')] w-full object-contain bg-center">
+    <div class="bg-stone-200 absolute top-56 lg:left-[31%] xl:left-1/4 px-10 py-8 text-center">
+      <div class="text-6xl font-serif text-zinc-800">SUMMER & WINTER</div>
+      <button
+        type="button"
+        class="transition duration-300 py-2 px-16 mt-4 bg-zinc-800 text-white font-sans text-xl hover:bg-white hover:text-zinc-600"
+        routerLink="/shop"
+      >
+        Shop Now
+      </button>
+    </div>
+  </div>
+  <div class="text-center my-10">
+    <div class="text-4xl text-zinc-600 font-serif tracking-widest">
+      YEAR ROUND
+    </div>
+    <div class="border-b-2 w-10 border-zinc-600 mx-auto py-3"></div>
+    <div class="tracking-widest text-lg font-serif text-zinc-600 py-5">
+      Must Have Items
+    </div>
+  </div>
+  <div class="flex justify-center items-center w-full mb-5">
+    <div
+      class="max-w-sm text-center w-1/4 bg-white mr-5 relative"
+      *ngFor="let card of products | slice:0:3; let i = index"
+    >
+      <img
+        [ngClass]="i === 1 ? 'h-96 w-full' : 'rounded-t-lg w-full h-96'"
+        src="{{card.productMainImage}}"
+        alt=""
+      />
+      <div
+        [ngClass]="i === 1 ? 'bg-none ml-7' : 'p-5 bg-zinc-800 customName'"
+        (mouseenter)="showDetails[i] = !showDetails[i]"
+        (mouseleave)="showDetails[i] = !showDetails[i]"
+      >
+        <h5
+          [ngClass]="i === 1 ? 'absolute top-2 left-32 text-6xl text-zinc-700 font-serif cursor-pointer transition hover:text-zinc-500 duration-300' : 'text-base tracking-tight text-white font-sans cursor-pointer'"
+          [class.hidden]="i !== 1 && showDetails[i]"
+          [routerLink]="i === 1 ? '/sale' : null"
+        >
+          {{ card.productName }}
+        </h5>
+        <div
+          *ngIf="showDetails[i] && i !== 1 && card.id !== undefined"
+          class="p-3 bg-zinc-800"
+          (click)="viewSingleProduct(card.id)"
+        >
+          <h5 class="absolute bottom-5 left-32 text-zinc-300 text-base cursor-pointer font-sans tracking-wider hover:text-zinc-50">View Details</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</ion-content>

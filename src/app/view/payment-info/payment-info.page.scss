@@ -1,0 +1,18 @@
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+
+.mat-mdc-form-field {
+  margin-top: 16px;
+}
+.customBtn{
+  background-color: #52525b;
+  padding: 10px 30px;
+}
+.customBtn:hover{
+  background-color: #71717a;
+}
+.mat-checkBox-size{
+  font-size: 16px;
+}
+mat-checkbox ::ng-deep .mat-checkbox-inner-container {width: 10px;height: 10px;}

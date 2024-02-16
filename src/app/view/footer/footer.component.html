@@ -1,0 +1,36 @@
+<div class="bg-neutral-800 h-60">
+  <div class="container">
+    <div class="flex justify-between">
+      <div class="text-center w-1/4">
+        <p class="pb-6 pt-6 text-base text-zinc-400 tracking-wider">STAY CONNECTED</p>
+        <ion-icon name="logo-facebook" class="pr-3 text-xl text-white cursor-pointer" title="facebook"></ion-icon>
+        <ion-icon name="logo-twitter" class="pr-3 text-xl text-white cursor-pointer" title="twitter"></ion-icon>
+        <ion-icon name="logo-pinterest" class="pr-3 text-xl text-white cursor-pointer" title="pinterest"></ion-icon>
+        <ion-icon name="logo-instagram" class="pr-3 text-xl text-white cursor-pointer" title="instagram"></ion-icon>
+      </div>
+      <div class="w-1/4 text-center">
+        <form [formGroup]="beFriend" (ngSubmit)="onSubmit()">
+          <p class="pb-6 pt-7 text-base text-zinc-400 tracking-wider">BE OUR FRIEND</p>
+          <input type="text"
+            class="w-full outline-none text-xs p-2 px-4 bg-neutral-600 hover:bg-neutral-400 hover:placeholder-zinc-700"
+            placeholder="Enter your email here" formControlName="email" />
+          <div *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)" class="text-xs text-red-500">
+            <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+            <div *ngIf="f['email'].errors?.['email']">
+              Please enter a valid email address.
+            </div>
+          </div>
+          <div class="text-center">
+            <button type="submit"
+              class="cursor-pointer bg-neutral-300 mt-3 text-sm py-1 text-neutral-600 w-full">Subscribe Now</button>
+          </div>
+        </form>
+      </div>
+      <div class="w-1/4 text-center">
+        <p class="pb-6 pt-7 text-base text-zinc-400 tracking-wider">NEED ASSISTANCE?</p>
+        <p class="text-white text-sm">+923054600843</p>
+        <p class="text-white text-sm pt-2">fizanoorCollection@gmail.com</p>
+      </div>
+    </div>
+  </div>
+</div>

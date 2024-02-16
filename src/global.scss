@@ -16,7 +16,7 @@
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
-@import '@ionic/angular/css/display.css';
+@import "@ionic/angular/css/display.css";
 
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
@@ -24,3 +24,42 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+//Tailwind
+/* src/global.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,600;0,700;0,800;0,900;1,200;1,400&display=swap");
+body {
+  font-family: 'Poppins', sans-serif;
+}
+.container{
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+
+//ng-select
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+.ng-select-container {
+  height: 40px !important;
+}
+
+.ng-select {
+  border: none;
+
+  .ng-select-container {
+    @apply h-10 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+  }
+
+}
+
+::ng-deep .apexcharts-menu-item.exportCSV {
+  display: none;
+}
