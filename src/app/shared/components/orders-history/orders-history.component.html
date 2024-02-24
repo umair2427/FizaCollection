@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <app-header></app-header>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="lg:container px-5 lg:px-0">
+    <p class="font-bold text-lg w-full text-start pt-10">Order History</p>
+  </div>
+  <div class="w-full lg:w-[80%] lg:mx-auto px-5 lg:px-0">
+    <div class="md:flex md:items-center md:flex-wrap mb-8">
+      <div class="md:w-[32%] w-full border border-gray-400 rounded-2xl p-3 mr-2 mb-3" *ngFor="let order of orders; let i = index">
+        <p class="font-bold font-sans py-2 text-lg md:text-base">Order#{{order.id}}</p>
+        <div>
+          <p class="text-base md:text-xs font-medium pr-1 pt-1.5">Products: <span class="text-gray-400 text-base md:text-xs font-sans font-normal">{{innerArrayLength[i]}}</span></p>
+          <p class="text-base md:text-xs font-medium pr-1 pt-1.5">Date: <span class="text-gray-400 text-base md:text-xs font-sans font-normal">{{order.productDateTime | date:'medium'}}</span></p>
+          <p class="text-base md:text-xs font-medium pr-1 pt-1.5">Delivery Address: <span class="text-gray-400 text-base md:text-xs font-sans font-normal">{{order.shipping_address}}</span></p>
+          <p class="text-base md:text-xs font-medium pr-1 pt-1.5">Status: <span class="text-gray-400 text-base md:text-xs font-sans font-normal">{{order.deliveryStatus}}</span></p>
+        </div>
+        <div class="flex justify-between items-center">
+          <p class="font-medium pr-1 pt-1.5 font-sans">Total Amount:</p>
+          <p class="text-gray-900 font-medium text-sm font-sans">${{order.totalAmount}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer></app-footer>
+</ion-content>

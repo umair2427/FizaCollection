@@ -4,14 +4,7 @@
       <p class="font-semibold text-gray-700">Profile</p>
       <ion-icon name="close-outline" class="p-2 rounded-xl bg-gray-100 cursor-pointer" (click)="close()"></ion-icon>
     </div>
-    <div (click)="toPlacedOrder()" class="flex justify-between items-center mt-3 text-sm py-4 px-4 rounded-2xl bg-gray-100 cursor-pointer">
-      <div class="flex items-center">
-        <img src="../../../../assets/icon/icons8-truck-26.png" class="w-5 mr-3" alt="">
-        <p class="font-medium">Placed Orders</p>
-      </div>
-      <ion-icon name="chevron-forward-outline"></ion-icon>
-    </div>
-    <div (click)="toOrderHistory()" class="flex justify-between items-center mt-3 text-sm py-4 px-4 rounded-2xl bg-gray-100 cursor-pointer">
+    <div (click)="toOrderHistory()" class="flex justify-between items-center mt-3 text-sm py-4 px-4 rounded-2xl bg-gray-100 pointer-events-none">
       <div class="flex items-center">
         <ion-icon name="timer-outline" class="text-xl mr-3"></ion-icon>
         <p class="font-medium">Orders History</p>

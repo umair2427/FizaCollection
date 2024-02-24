@@ -106,7 +106,6 @@ export class AuthComponent implements OnInit {
         response => {
           this.message = response.message || '';
           localStorage.setItem('token', JSON.stringify(response.token));
-          localStorage.setItem('user', JSON.stringify(response.userName));
           this.color = 'success';
           this.presentToast('top');
           this.loginForm.reset();

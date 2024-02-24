@@ -265,20 +265,20 @@ export class PaymentInfoPage implements OnInit {
       s_id: orderForm.s_id
     }
     console.log(obj);
-    // this.orderService.addOrder(obj).subscribe(
-    //   response => {
-    //     this.message = response.message || '';
-    //     this.color = 'success';
-    //     this.presentToast('top');
-    //     this.orderForm.reset();
-    //   },
-    //   error => {
-    //     console.error('Error:', error);
-    //     this.message = error;
-    //     this.color = 'danger';
-    //     this.presentToast('top');
-    //   }
-    // )
+    this.orderService.addOrder(obj).subscribe(
+      response => {
+        this.message = response.message || '';
+        this.color = 'success';
+        this.presentToast('top');
+        this.orderForm.reset();
+      },
+      error => {
+        console.error('Error:', error);
+        this.message = error;
+        this.color = 'danger';
+        this.presentToast('top');
+      }
+    )
   }
 
   async presentToast(position: 'top') {

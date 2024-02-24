@@ -59,6 +59,13 @@ export class ProductService {
       )
   }
 
+  searchProduct(product: any) {
+    return this.http.post<any>(`${environment.url}search`, product)
+      .pipe(
+        catchError(this.handleError),
+      )
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);

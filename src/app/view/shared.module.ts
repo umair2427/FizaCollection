@@ -28,7 +28,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ProfileComponent } from '../shared/components/profile/profile.component';
 import { ForgotPasswordComponent } from '../shared/components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from '../shared/components/reset-password/reset-password.component';
-
+import { OrdersHistoryComponent } from '../shared/components/orders-history/orders-history.component';
 
 
 @NgModule({
@@ -42,7 +42,8 @@ import { ResetPasswordComponent } from '../shared/components/reset-password/rese
     RegisterComponent,
     ProfileComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    OrdersHistoryComponent
   ],
   exports: [
     HeaderComponent,
@@ -53,7 +54,8 @@ import { ResetPasswordComponent } from '../shared/components/reset-password/rese
     RegisterComponent,
     ProfileComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    OrdersHistoryComponent
   ],
   imports: [
     CommonModule,

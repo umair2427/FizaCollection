@@ -8,8 +8,6 @@ import { User } from './User';
   providedIn: 'root'
 })
 export class AuthService {
-  public user = JSON.parse(localStorage.getItem('user')!);
-
   //Loaders
   private isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
@@ -70,11 +68,14 @@ export class AuthService {
 
   logOut() {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  }
+
+  getToken(){
+    return localStorage.getItem('token');
   }
 
   isLoggedIn(): boolean {
-    const token = localStorage.getItem('token');
+    const token = this.getToken();
     return !!token;
   }
 }

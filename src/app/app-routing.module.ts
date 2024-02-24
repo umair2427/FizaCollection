@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ForgotPasswordComponent } from './shared/components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './shared/components/reset-password/reset-password.component';
+import { OrdersHistoryComponent } from './shared/components/orders-history/orders-history.component';
+import { CartGuard } from './shared/guards/cart-guard/cart.guard';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 
 const routes: Routes = [
   {
@@ -35,11 +38,13 @@ const routes: Routes = [
   },
   {
     path: 'view-cart',
-    loadChildren: () => import('./view/view-cart/view-cart.module').then( m => m.ViewCartPageModule)
+    loadChildren: () => import('./view/view-cart/view-cart.module').then( m => m.ViewCartPageModule),
+    canActivate: [CartGuard]
   },
   {
     path: 'payment-info',
-    loadChildren: () => import('./view/payment-info/payment-info.module').then( m => m.PaymentInfoPageModule)
+    loadChildren: () => import('./view/payment-info/payment-info.module').then( m => m.PaymentInfoPageModule),
+    canActivate: [CartGuard]
   },
   {
     path: 'forgot-password',
@@ -48,7 +53,12 @@ const routes: Routes = [
   {
     path: 'reset-password/:token',
     component: ResetPasswordComponent
-  }
+  },
+  {
+    path: 'order-history',
+    component: OrdersHistoryComponent
+  },
+  { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({
