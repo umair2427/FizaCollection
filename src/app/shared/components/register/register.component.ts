@@ -105,7 +105,9 @@ export class RegisterComponent implements OnInit {
       position: { right: '0px', top: '60px' },
       panelClass: ['animate__animated', 'animate__slideInRight'],
     });
-    this.closeRegisterDialog();
+    setTimeout(() => {
+      this.closeRegisterDialog();
+    }, 1000);
   }
 
   closeRegisterDialog() {

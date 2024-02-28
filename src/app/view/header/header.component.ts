@@ -21,7 +21,6 @@ export class HeaderComponent implements OnInit {
   filteredProducts: Product[] = [];
   searchForm!: FormGroup;
   private searchSubject: Subject<string> = new Subject<string>();
-  private searchSubscription: Subscription | undefined;
   constructor(public dialog: MatDialog, private authService: AuthService, private productService: ProductService,
     private navCtrl: NavController,) { }
   ngOnInit() {
@@ -52,12 +51,6 @@ export class HeaderComponent implements OnInit {
       this.navCtrl.navigateForward(`/product-detail/${product.id}`);
       this.searchForm.reset();
       this.filteredProducts = [];
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
     }
   }
 
