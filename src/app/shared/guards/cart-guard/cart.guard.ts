@@ -12,7 +12,6 @@ export class CartGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const myCart = JSON.parse(localStorage.getItem('myCart') || '[]') as any[];
     if (myCart && myCart?.length > 0) {
-      console.log("Hello");
 
       return true;
     } else {

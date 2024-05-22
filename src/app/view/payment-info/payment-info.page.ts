@@ -264,13 +264,14 @@ export class PaymentInfoPage implements OnInit {
       paymentMethod: orderForm.paymentMethod,
       s_id: orderForm.s_id
     }
-    console.log(obj);
     this.orderService.addOrder(obj).subscribe(
       response => {
         this.message = response.message || '';
         this.color = 'success';
         this.presentToast('top');
         this.orderForm.reset();
+        localStorage.removeItem('myCart');
+        this.router.navigate(['home'])
       },
       error => {
         console.error('Error:', error);
