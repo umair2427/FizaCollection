@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from 'src/app/shared/service/product.service';
 import { Product } from '../../shared/service/cart/Product';
+import { skipWhile, take } from 'rxjs';
 
 
 @Component({
@@ -10,8 +11,8 @@ import { Product } from '../../shared/service/cart/Product';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  newProduct: Product| undefined;
-  products: Product[] = [];
+  newProduct: any| undefined;
+  products: any[] = [];
   page = 1;
   pageSize = 9;
   constructor(
@@ -22,10 +23,10 @@ export class HomePage implements OnInit {
 
   viewSingleProduct(id: number){
     this.newProduct = this.products.find((element:any)=>{
-      return element.id === id;
+      return element._id === id;
     })
     if (this.newProduct) {
-      this.route.navigate(['product-detail', this.newProduct.id]);
+      this.route.navigate(['product-detail', this.newProduct._id]);
     } else {
       console.error('Product not found');
     }
@@ -40,8 +41,8 @@ export class HomePage implements OnInit {
   }
 
   private loadProducts(event?: any) {
-    this.productService.getShopProducts(this.page, this.pageSize).subscribe(
-      (data: { totalCount: number, products: Product[] }) => {
+    this.productService.getAllProducts(this.page, this.pageSize).pipe(skipWhile(val => !val), take(1)).subscribe(
+      (data: any) => {
         this.products = this.products.concat(data.products);
 
         if (event) {

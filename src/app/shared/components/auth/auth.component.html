@@ -37,12 +37,12 @@
       </div>
     </div>
     <div class="text-end px-1">
-      <a (click)="navigateToForgotPassword()" class="text-zinc-600 font-sans cursor-pointer hover:text-zinc-500">Forget
+      <a (click)="openDialogForgetPassword()" class="text-zinc-600 font-sans cursor-pointer hover:text-zinc-500">Forget
         password?</a>
     </div>
     <div class="w-full p-2">
       <button type="submit" [disabled]="loginForm.invalid || (isLoading$ | async)"
-        class="bg-zinc-600 text-white font-bold py-2 w-full hover:bg-zinc-500 flex items-center justify-center">
+        class="bg-zinc-600 text-white font-bold py-2 w-full hover:bg-zinc-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
         <span class="mr-2">Login</span>
         <ion-spinner class="text-white" *ngIf="(isLoading$ | async)" name="crescent"></ion-spinner>
       </button>

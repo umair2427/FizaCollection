@@ -26,34 +26,34 @@ interface items {
   styleUrls: ['./sale.page.scss'],
 })
 export class SalePage implements OnInit {
-  products: Product[] = [];
-  lowerValue: number = 1;
-  upperValue: number = 2000;
-  showPrice: boolean = true;
-  showCategory: boolean = true;
-  selectedCategory: string | undefined;
-  public SortOption = SortOption;
-  selectedSortOption: SortOption = SortOption.SORT;
-  clearFilter: boolean = false;
-  itemNotFound: boolean = false;
-  radioPrice = null;
-  search: any;
-  filteredProducts: Product[] = [];
-  categories: items[] = [];
-  loading = false;
+  products: any[] = [];
+  filteredProducts: any[] = [];
+
+  lowerValue: number = 0;
+  upperValue: number = 100;
   page = 1;
   pageSize = 9;
-  constructor(
-    public dialog: MatDialog,
-    private router: Router,
-    private productService: ProductService,
-  ) { }
+
+  showPrice: boolean = true;
+  showCategory: boolean = true;
+  clearFilter: boolean = false;
+  itemNotFound: boolean = false;
+  loading: boolean = false;
+
+  selectedCategory: string | undefined;
+
+  public SortOption = SortOption;
+  selectedSortOption: SortOption = SortOption.SORT;
+
+  radioPrice = null;
+  search: any;
+  categories: string[] = ['Top', '2 Piece Suit', '3 Piece Suit', 'Flapper', 'Jeans', 'Capri', 'Trouser', 'Lehnga', 'Dupatta', 'Thigts'];
+
+  constructor(public dialog: MatDialog, private productService: ProductService) { }
 
   ngOnInit() {
     this.loadProducts();
-    this.showCategories();
   }
-
 
   loadData(event: any) {
     this.page++;
@@ -62,62 +62,41 @@ export class SalePage implements OnInit {
 
   private loadProducts(event?: any) {
     this.loading = true;
-    this.productService.getSaleProducts(this.page, this.pageSize).subscribe(
-      (data: { totalCount: number, products: Product[] }) => {
+
+    this.productService.getSaleProducts(this.page, this.pageSize, this.selectedCategory).subscribe(
+      (data: { totalProducts: number, products: any[] }) => {
         this.products = this.products.concat(data.products);
-
-        // Filter products with discounts
-        this.filteredProducts = this.products.filter(product =>
-          product.productDiscount !== undefined && +product.productDiscount !== 0
-        );
-
+        this.filteredProducts = this.products;
         this.loading = false;
 
-        if (event) {
+        if (event && event.target) {
           event.target.complete();
-        }
-
-        // Check if all items are loaded
-        if (this.products.length >= data.totalCount) {
-          if (event) {
-            event.target.disabled = true;  // Disable infinite scroll
+          if (this.products.length >= data.totalProducts) {
+            event.target.disabled = true;
           }
         }
       },
       (error: Error) => {
         console.error(error);
         this.loading = false;
-
-        if (event) {
+        if (event && event.target) {
           event.target.complete();
         }
       }
     );
   }
 
-
-  //Open Dialog
-  openDialog(pro: Product) {
+  openDialog(pro: any) {
     this.dialog.open(ProductViewComponent, {
       width: '700px',
       height: '550px',
       data: pro,
-      disableClose: true
+      disableClose: true,
     });
   }
-
-  viewProductDetails(id: number) {
-    this.search = this.products.find((element: any) => {
-      return element.id === id;
-    });
-    this.openDialog(this.search);
-  }
-
-  // Sorting options
 
   // Sort function
   sortProducts(option: SortOption) {
-
     switch (option) {
       case SortOption.SORT:
         this.clearFilter = false;
@@ -125,7 +104,7 @@ export class SalePage implements OnInit {
         break;
       case SortOption.NEWEST:
         this.filteredProducts = this.filteredProducts.sort(
-          (a, b) => (a.productDateTime ? new Date(a.productDateTime).getTime() : 0) - (b.productDateTime ? new Date(b.productDateTime).getTime() : 0)
+          (a, b) => (a.productDateTime?.getTime() || 0) - (b.productDateTime?.getTime() || 0)
         );
         break;
       case SortOption.PRICE_LOW_TO_HIGH:
@@ -153,58 +132,32 @@ export class SalePage implements OnInit {
     }
   }
 
-  //Price Range
+  // Price Range
   priceFilter(event: any) {
     const selectedPrice = parseInt(event.target.value, 10);
-    this.clearFilter = true;
-    this.itemNotFound = false;
-
-    this.filteredProducts = this.products.filter((product) => {
-      if (product.discountedPrice !== undefined && product.discountedPrice !== null && product.productDiscount !== 0) {
-        const discountedPrice = parseFloat(product.discountedPrice);
-        if (!isNaN(discountedPrice)) {
-          return discountedPrice >= selectedPrice && discountedPrice < selectedPrice + 500;
-        }
-      }
-      return false;
-    });
-
-    if (this.filteredProducts.length === 0) {
-      this.itemNotFound = true;
-    }
-  }
-
-
-
-  //Category
-  arrangeByCategory(event: any) {
-    const selectedCategoryId = event.value;
     this.filteredProducts = this.products.filter((product) => {
       this.clearFilter = true;
       this.itemNotFound = false;
-
-      return product.categoryId === selectedCategoryId;
+      return (product.productPrice || 0) >= selectedPrice && (product.productPrice || 0) < selectedPrice + 1000;
     });
-
     if (this.filteredProducts.length === 0) {
       this.itemNotFound = true;
     }
   }
 
-  showCategories() {
-    this.productService.getCategories().subscribe((res: any) => {
-      this.categories = res.data;
-    },
-      (error) => {
-        console.error('Error fetching categories:', error);
-      })
+  // Category
+  arrangeByCategory(event: any) {
+    this.selectedCategory = event;
+    this.page = 1;
+    this.products = [];
+    this.loadProducts();
   }
+
   reset() {
     this.clearFilter = false;
     this.radioPrice = null;
     this.itemNotFound = false;
-    this.filteredProducts = this.products.filter(product => product.productDiscount !== undefined && +product.productDiscount !== 0);
+    this.filteredProducts = [...this.products];
   }
-
 
 }

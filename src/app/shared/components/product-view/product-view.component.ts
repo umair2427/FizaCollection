@@ -1,17 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { SideBarComponent } from '../side-bar/side-bar.component';
-import { OwlOptions } from 'ngx-owl-carousel-o';
-import { Product } from '../../service/cart/Product'
 import { NavController } from '@ionic/angular';
+import { OwlOptions } from 'ngx-owl-carousel-o';
 import { CartService } from '../../service/cart/cart.service';
 import { ProductService } from '../../service/product.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SideBarComponent } from '../side-bar/side-bar.component';
 
 interface items {
   id?: number;
@@ -25,20 +23,21 @@ interface items {
   styleUrls: ['./product-view.component.scss'],
 })
 export class ProductViewComponent implements OnInit {
-  productData: Product | undefined;
-  colors: items[] = [];
-  defaultProduct!: Product;
-  quantity!:number;
-  currentColor!:number;
+  productData: any | undefined;
+  colors: string[] = ['White', 'Green', 'Blue', 'Black', 'Mehroon', 'Pink', 'Pista', 'Purple', 'Henna(Mehndi)', 'Yellow', 'Orange', 'Master', 'Brown', 'Navy Blue'];
+  defaultProduct!: any;
+  quantity!: number;
+  currentColor!: number;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: Product | undefined,
+    @Inject(MAT_DIALOG_DATA) public data: any | undefined,
     public dialog: MatDialog,
     private dialogRef: MatDialogRef<ProductViewComponent>,
     private navCtrl: NavController,
     private cartService: CartService,
     private productService: ProductService,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+
   ) {
     this.productData = this.data !== undefined ? this.data : undefined;
 
@@ -64,36 +63,25 @@ export class ProductViewComponent implements OnInit {
       }
     }, 300);
     this.cartForm = this._fb.group({
-      color: ['', [Validators.required]],
+      color: [null, [Validators.required]],
       quantity: [1]
     })
-    this.getColors();
   }
 
-   // convenience getter for easy access to form fields
-   get f() { return this.cartForm.controls; }
+  // convenience getter for easy access to form fields
+  get f() { return this.cartForm.controls; }
 
-  getColors(): void {
-    this.productService.getColors().subscribe(
-      (data: items) => {
-        this.colors = data.data;
-      },
-      (error) => {
-        console.error('Error fetching data from backend:', error);
-      }
-    );
-  }
 
   closeProductView() {
     this.dialogRef.close();
   }
 
-  productDetail(product: Product | undefined) {
+  productDetail(product: any | undefined) {
     if (product && product.discountedPrice !== undefined && product.productDiscount !== 0) {
-      this.navCtrl.navigateForward(`/product-sale-detail/${product.id}`);
+      this.navCtrl.navigateForward(`/product-sale-detail/${product._id}`);
       this.closeProductView();
     } else if (product && product.productDiscount !== undefined && product.productDiscount === 0) {
-      this.navCtrl.navigateForward(`/product-detail/${product.id}`);
+      this.navCtrl.navigateForward(`/product-detail/${product._id}`);
       this.closeProductView();
     }
   }
@@ -108,16 +96,16 @@ export class ProductViewComponent implements OnInit {
     });
   }
 
-  addToCart(product: Product) {
-    if(this.cartForm.invalid){
+  addToCart(product: any) {
+    if (this.cartForm.invalid) {
       // Mark all form controls as touched to display the validation errors
       Object.values(this.cartForm.controls).forEach(control => {
         control.markAsTouched();
       });
-    } else{
-      product.colorId = this.cartForm.get('color')?.value;
+    } else {
+      product.color = this.cartForm.get('color')?.value;
       product.quantity = this.cartForm.get('quantity')?.value;
-      this.cartService.addToCart(product)
+      this.cartService.addToCart(product);
       this.openDialog();
       this.closeProductView();
     }

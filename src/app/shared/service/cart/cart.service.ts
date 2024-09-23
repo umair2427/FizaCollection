@@ -7,7 +7,7 @@ import { Product } from './Product';
 })
 export class CartService {
   private cartKey = 'myCart';
-  private cartItemsSource = new BehaviorSubject<Product[]>([]);
+  private cartItemsSource = new BehaviorSubject<any[]>([]);
   private totalAmountSource = new BehaviorSubject<number>(0);
   cartItems$ = this.cartItemsSource.asObservable();
   totalAmount$ = this.totalAmountSource.asObservable();
@@ -16,13 +16,13 @@ export class CartService {
     this.loadCartItems();
   }
 
-  private updateCartItemsInStorage(newCartItems: Product[]): void {
+  private updateCartItemsInStorage(newCartItems: any[]): void {
     localStorage.setItem(this.cartKey, JSON.stringify(newCartItems));
     this.cartItemsSource.next(newCartItems);
     this.updateTotalAmount(newCartItems);
   }
 
-  private updateTotalAmount(cartItems: Product[]): void {
+  private updateTotalAmount(cartItems: any[]): void {
     let total = 0;
     for (const item of cartItems) {
       if (
@@ -46,34 +46,35 @@ export class CartService {
 
   private loadCartItems(): void {
     const cartData = localStorage.getItem(this.cartKey);
-    const cartItems: Product[] = cartData ? JSON.parse(cartData) : [];
+    const cartItems: any[] = cartData ? JSON.parse(cartData) : [];
     this.cartItemsSource.next(cartItems);
     this.updateTotalAmount(cartItems);
   }
 
-  getCartItems(): Product[] {
+  getCartItems(): any[] {
     return this.cartItemsSource.getValue();
   }
 
-  addToCart(item: Product): void {
+  addToCart(item: any): void {
     const cartItems = this.cartItemsSource.getValue();
     const quantityToAdd: number = item.quantity || 1;
 
     const existingItem = cartItems.find(
-      (existingItem) => existingItem.id === item.id
+      (existingItem) => existingItem._id === item._id 
     );
 
     if (existingItem) {
-    existingItem.quantity = (existingItem.quantity || 1) + quantityToAdd;
-  } else {
-    item.quantity = quantityToAdd;
-    cartItems.push(item);
-  }
+      existingItem.quantity = (existingItem.quantity || 1) + quantityToAdd;
+    } else {
+      item.quantity = quantityToAdd;
+      cartItems.push(item);
+    }
 
     this.updateCartItemsInStorage(cartItems);
   }
 
-  updateCartItem(updatedItem: Product): void {
+
+  updateCartItem(updatedItem: any): void {
     let cartItems = this.cartItemsSource.getValue();
     cartItems = cartItems.map((item) => {
       if (item.id === updatedItem.id) {
@@ -84,7 +85,7 @@ export class CartService {
     this.updateCartItemsInStorage(cartItems);
   }
 
-  removeFromCart(itemToRemove: Product): void {
+  removeFromCart(itemToRemove: any): void {
     let cartItems = this.cartItemsSource.getValue();
     cartItems = cartItems.filter((item) => item !== itemToRemove);
     this.updateCartItemsInStorage(cartItems);

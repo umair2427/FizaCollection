@@ -30,7 +30,7 @@ export class OrderService {
 
   addOrder(order: any): Observable<any> {
     this.setLoading(true);
-    return this.http.post<any>(`${environment.url}order`, order)
+    return this.http.post<any>(`${environment.url}createOrder`, order)
       .pipe(
         catchError(this.handleError),
         finalize(() => this.setLoading(false))

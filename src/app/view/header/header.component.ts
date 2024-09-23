@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NavController } from '@ionic/angular';
-import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, filter, fromEvent, map, skipWhile, switchMap, take, tap } from 'rxjs';
 import { AuthComponent } from 'src/app/shared/components/auth/auth.component';
 import { ProfileComponent } from 'src/app/shared/components/profile/profile.component';
 import { RegisterComponent } from 'src/app/shared/components/register/register.component';
@@ -18,38 +18,50 @@ import { ProductService } from 'src/app/shared/service/product.service';
 })
 export class HeaderComponent implements OnInit {
   dialogRef!: MatDialogRef<SideBarComponent>;
-  filteredProducts: Product[] = [];
-  searchForm!: FormGroup;
-  private searchSubject: Subject<string> = new Subject<string>();
-  constructor(public dialog: MatDialog, private authService: AuthService, private productService: ProductService,
-    private navCtrl: NavController,) { }
-  ngOnInit() {
-    this.searchForm = new FormGroup({
-      productName: new FormControl('')
-    });
+  @ViewChild('search') search!: ElementRef;
 
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(value => this.productService.searchProduct({ productName: value }))
-    ).subscribe(response => {
-      this.filteredProducts = response;
-    }, error => {
-      console.error('Error searching:', error);
-    });
+  filteredProducts: Product[] = [];
+
+  private searchSubject: Subject<string> = new Subject<string>();
+  constructor(
+    public dialog: MatDialog,
+    private authService: AuthService,
+    private productService: ProductService,
+    private navCtrl: NavController,) { }
+  ngOnInit() { }
+
+  ngAfterViewInit(): void {
+    this.initSearchTrigger();
   }
-  onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+
+  initSearchTrigger() {
+    fromEvent(this.search?.nativeElement, 'keyup')
+      .pipe(
+        filter(Boolean),
+        debounceTime(700),
+        map(() => this.search?.nativeElement?.value.trim()),
+        distinctUntilChanged(),
+        tap((searchVal) => {
+          if (searchVal.length > 0 || searchVal === '') {
+            this.productService.searchProduct(searchVal).pipe(skipWhile(val => !val), take(1)).subscribe(
+              (res: any) => {
+                console.log(res.products);
+                this.filteredProducts = res.products
+              }
+            )
+          }
+        })
+      )
+      .subscribe();
   }
-  productDetail(product: Product | undefined) {
+
+ 
+  productDetail(product: any) {
     if (product && product.discountedPrice !== undefined && product.productDiscount !== 0) {
-      this.navCtrl.navigateForward(`/product-sale-detail/${product.id}`);
-      this.searchForm.reset();
+      this.navCtrl.navigateForward(`/product-sale-detail/${product._id}`);
       this.filteredProducts = [];
     } else if (product && product.productDiscount !== undefined && product.productDiscount === 0) {
-      this.navCtrl.navigateForward(`/product-detail/${product.id}`);
-      this.searchForm.reset();
+      this.navCtrl.navigateForward(`/product-detail/${product._id}`);
       this.filteredProducts = [];
     }
   }
@@ -80,7 +92,7 @@ export class HeaderComponent implements OnInit {
     this.dialog.open(ProfileComponent, {
       disableClose: true,
       width: '300px',
-      height: '250px',
+      height: '150px',
       position: { right: '0px', top: '70px' },
       panelClass: ['animate__animated', 'animate__slideInRight'],
     });

@@ -1,17 +1,14 @@
 import {
   Component,
-  ElementRef,
-  OnInit,
-  VERSION,
-  ViewChild,
+  OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatStepper } from '@angular/material/stepper';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { Country, State, City } from 'country-state-city';
-import { Observable } from 'rxjs';
+import { City, Country, State } from 'country-state-city';
+import { Observable, skipWhile, take } from 'rxjs';
+import { CartService } from 'src/app/shared/service/cart/cart.service';
 import { Product } from 'src/app/shared/service/cart/Product';
 import { OrderService } from 'src/app/shared/service/order/order.service';
 import { ProductService } from 'src/app/shared/service/product.service';
@@ -50,7 +47,7 @@ export class PaymentInfoPage implements OnInit {
   billingFormVisible: boolean = false;
   getProductIds: number[] = [];
   deliveryStatus: items[] = [];
-  cartItems: Product[] = [];
+  cartItems: any[] = [];
   totalAmount!: number;
 
   public message: string = '';
@@ -60,10 +57,10 @@ export class PaymentInfoPage implements OnInit {
   constructor(
     private _fb: FormBuilder,
     public dialog: MatDialog,
-    private productService: ProductService,
     private orderService: OrderService,
     private toastController: ToastController,
-    private router: Router) { }
+    private router: Router,
+    private cartService: CartService) { }
 
   ngOnInit() {
     this.countries = Country.getAllCountries();
@@ -75,9 +72,9 @@ export class PaymentInfoPage implements OnInit {
         number: [''],
         email: [''],
         address: [''],
-        country: [''],
-        province: [''],
-        city: [''],
+        country: [null],
+        province: [null],
+        city: [null],
         zipCode: [''],
       }),
       shippingForm: this._fb.group({
@@ -86,15 +83,14 @@ export class PaymentInfoPage implements OnInit {
         shipping_number: ['', [Validators.required]],
         shipping_email: ['', [Validators.required, Validators.email]],
         shipping_address: ['', [Validators.required]],
-        shipping_country: ['', [Validators.required]],
-        shipping_province: ['', [Validators.required]],
-        shipping_city: ['', [Validators.required]],
+        shipping_country: [null, [Validators.required]],
+        shipping_province: [null, [Validators.required]],
+        shipping_city: [null, [Validators.required]],
         shipping_zipCode: ['', [Validators.required]],
       }),
       totalAmount: ['', [Validators.required]],
       products: ['', [Validators.required]],
       paymentMethod: ['', [Validators.required]],
-      s_id: [],
       cardInfo: this._fb.group({
         cardName: [''],
         cardNum: [''],
@@ -102,7 +98,7 @@ export class PaymentInfoPage implements OnInit {
         cvc: ['']
       })
     });
-    this.isLoading$ = this.productService.isLoading$;
+    this.isLoading$ = this.orderService.isLoading$;
     this.cartItems = JSON.parse(localStorage.getItem('myCart')!);
     this.totalAmount = JSON.parse(localStorage.getItem('totalAmount')!);
   }
@@ -208,9 +204,9 @@ export class PaymentInfoPage implements OnInit {
     this.bankTransfer = false;
     this.billingFormVisible = false;
 
-    if (selectedPaymentMethod === '1') {
+    if (selectedPaymentMethod === 'COD') {
       this.cod = true;
-    } else if (selectedPaymentMethod === '2') {
+    } else if (selectedPaymentMethod === 'Bank Transfer') {
       this.bankTransfer = true;
     } else if (selectedPaymentMethod === '3') {
       this.card = true;
@@ -237,10 +233,18 @@ export class PaymentInfoPage implements OnInit {
         zipCode: shippingFormValue.shipping_zipCode
       });
     }
-    const cartItemIds = this.cartItems.map((item: any) => item.id);
-    +(this.orderForm.get('paymentMethod')?.value)
+    const cartItemIds = this.cartItems.map((item: any) => item._id);
+    const cartDetails = this.cartItems.map((item: any) => {
+      return {
+        color: item.color,
+        quantity: item.quantity,
+        productName: item.productName,
+        productMainImage: item.productMainImage
+      };
+    });
+    this.orderForm.get('paymentMethod')?.value;
     const orderForm = this.orderForm.value
-    const obj = {
+    const payload = {
       email: orderForm.billingForm.email,
       firstName: orderForm.billingForm.firstName,
       lastName: orderForm.billingForm.lastName,
@@ -262,15 +266,15 @@ export class PaymentInfoPage implements OnInit {
       totalAmount: this.totalAmount,
       products: cartItemIds,
       paymentMethod: orderForm.paymentMethod,
-      s_id: orderForm.s_id
+      cartDetails: cartDetails
     }
-    this.orderService.addOrder(obj).subscribe(
+    this.orderService.addOrder(payload).pipe(skipWhile(val => !val), take(1)).subscribe(
       response => {
         this.message = response.message || '';
         this.color = 'success';
         this.presentToast('top');
         this.orderForm.reset();
-        localStorage.removeItem('myCart');
+        this.cartService.clearCart();
         this.router.navigate(['home'])
       },
       error => {

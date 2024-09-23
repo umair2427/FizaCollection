@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth/auth.service';
 import { Observable } from 'rxjs';
 import { ToastController } from '@ionic/angular';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-forgot-password',
@@ -19,7 +20,8 @@ export class ForgotPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     public authService: AuthService,
-    private toastController: ToastController,) { }
+    private toastController: ToastController,
+    private matDialogRef: MatDialogRef<ForgotPasswordComponent>) { }
 
   ngOnInit() {
     this.forgotPasswordForm = this.fb.group({
@@ -42,6 +44,7 @@ export class ForgotPasswordComponent implements OnInit {
         this.color = 'success';
         this.presentToast('top');
         this.forgotPasswordForm.reset();
+        this.close();
       }, error => {
         console.error('Error placing order:', error);
         this.message = error;
@@ -65,6 +68,10 @@ export class ForgotPasswordComponent implements OnInit {
 
   goToLogin() {
     this.router.navigate(['login']);
+  }
+
+  close() { 
+    this.matDialogRef.close();
   }
 
 }

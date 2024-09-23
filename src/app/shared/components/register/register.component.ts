@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { AuthComponent } from '../auth/auth.component';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../service/auth/auth.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastController } from '@ionic/angular';
+import { AuthService } from '../../service/auth/auth.service';
+import { AuthComponent } from '../auth/auth.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +20,8 @@ export class RegisterComponent implements OnInit {
   confirmPasswordField!: boolean;
   message!: string;
   color!: string;
-  public loading: boolean = false;
+
+  isLoading$!: Observable<boolean>;
   constructor(
     public dialog: MatDialog,
     private dialogRef: MatDialogRef<AuthComponent>,
@@ -33,55 +33,17 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.registerForm = this.fb.group(
       {
-        firstName: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
-        alterEmail: ['', [Validators.required, Validators.email]],
+        name: ['', [Validators.required]],
         dob: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(8)
-          ],
-        ],
-        confirmPassword: ['', [Validators.required]],
-
         number: [
           '',
           [Validators.required, Validators.pattern('[- +()0-9]{10,12}')],
         ],
       },
-      {
-        validators: this.matchValidator('password', 'confirmPassword'),
-      }
     );
-  }
+    this.isLoading$ = this.authService.isLoading$;
 
-  matchValidator(
-    controlName: string,
-    matchingControlName: string
-  ): ValidatorFn {
-    return (abstractControl: AbstractControl) => {
-      const control = abstractControl.get(controlName);
-      const matchingControl = abstractControl.get(matchingControlName);
-
-      if (
-        matchingControl?.errors &&
-        !matchingControl.errors['matchValidator']
-      ) {
-        return null;
-      }
-
-      if (control?.value !== matchingControl?.value) {
-        const error = { matchValidator: 'Passwords do not match.' };
-        matchingControl?.setErrors(error);
-        return error;
-      } else {
-        matchingControl?.setErrors(null);
-        return null;
-      }
-    };
   }
 
   // convenience getter for easy access to form fields
@@ -89,13 +51,6 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.controls;
   }
 
-  togglemyPasswordFieldType() {
-    this.ismyTextFieldType = !this.ismyTextFieldType;
-  }
-
-  confirmPasswordToggle() {
-    this.confirmPasswordField = !this.confirmPasswordField;
-  }
   //Open Dialog AuthComponent
   openDialogAuth() {
     this.dialog.open(AuthComponent, {
@@ -135,51 +90,32 @@ export class RegisterComponent implements OnInit {
   }
 
   formSubmit() {
-    if (this.registerForm.invalid) {
-      // Mark all form controls as touched to display the validation errors
-      Object.values(this.registerForm.controls).forEach(control => {
-        control.markAsTouched();
-      });
-      this.message = 'Input fields are invalid';
-      this.color = 'danger';
-      this.presentToast('top');
-    } else {
-      const {
-        firstName,
-        lastName,
-        alterEmail,
-        dob,
-        email,
-        password,
-        confirmPassword,
-        number
-      } = this.registerForm.value;
-      let obj = {
-        firstName,
-        lastName,
-        alterEmail,
-        dob,
-        email,
-        password,
-        confirmPassword,
-        number
-      };
-      this.authService.registerUser(obj).subscribe(
-        response => {
-          this.loading = true;
-          this.message = response.message || '';
-          this.color = 'success';
-          this.presentToast('top');
-          this.registerForm.reset();
-          this.openDialogAuth();
-        },
-        error => {
-          console.error('Error placing order:', error);
-          this.message = error;
-          this.color = 'danger';
-          this.presentToast('top');
-        }
-      )
-    }
+    const {
+      name,
+      dob,
+      email,
+      number
+    } = this.registerForm.value;
+    let payload = {
+      name,
+      dob,
+      email,
+      number
+    };
+    this.authService.registerUser(payload).subscribe(
+      response => {
+        this.message = 'Register successfully and password reset email sent';
+        this.color = 'success';
+        this.presentToast('top');
+        this.registerForm.reset();
+        this.openDialogAuth();
+      },
+      error => {
+        console.error('Error placing order:', error);
+        this.message = error;
+        this.color = 'danger';
+        this.presentToast('top');
+      }
+    )
   }
 }

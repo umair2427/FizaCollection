@@ -2,13 +2,13 @@
   <div class="md:container mx-auto">
     <div class="flex justify-between p-4">
       <div class="flex relative">
-        <form [formGroup]="searchForm">
+        <form>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="w-5 h-5 text-neutral-700 mx-2 mt-1 absolute top-0">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
-          <input formControlName="productName" type="search" (input)="onSearch($event)"
+          <input #search type="search"
             class="border-b border-gray-300 focus:border-neutral-500 outline-none placeholder-neutral-700 bg-neutral-300 pl-8"
             placeholder="Search..." />
         </form>

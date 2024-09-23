@@ -6,6 +6,7 @@ import { ToastController } from '@ionic/angular';
 import { AuthService } from '../../service/auth/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 
 @Component({
@@ -26,7 +27,7 @@ export class AuthComponent implements OnInit {
     private fb: FormBuilder,
     private toastController: ToastController,
     private authService: AuthService,
-    private route: Router) {}
+    private route: Router) { }
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -67,9 +68,16 @@ export class AuthComponent implements OnInit {
     this.closeAuthDialog();
   }
 
-  navigateToForgotPassword(){
-    this.route.navigate(['forgot-password']);
+  //Open Dialog ForgetPassword
+  openDialogForgetPassword() {
     this.closeAuthDialog();
+    this.dialog.open(ForgotPasswordComponent, {
+      width: '500px',
+      height: '250px',
+      disableClose: true,
+      position: { right: '0px', top: '60px' },
+      panelClass: ['animate__animated', 'animate__slideInRight', 'transform', 'duration-500', 'ease-out', 'origin-bottom'],
+    })
   }
 
   async presentToast(position: 'top') {
@@ -85,40 +93,25 @@ export class AuthComponent implements OnInit {
   }
 
   formSubmit() {
-    if (this.loginForm.invalid) {
-      // Mark all form controls as touched to display the validation errors
-      Object.values(this.loginForm.controls).forEach(control => {
-        control.markAsTouched();
-      });
-      this.message = 'Input fields are invalid';
-      this.color = 'danger';
-      this.presentToast('top');
-    } else {
-      const {
-        email,
-        password
-      } = this.loginForm.value;
-      let obj = {
-        email,
-        password
-      };
-      this.authService.loginUser(obj).subscribe(
-        response => {
-          this.message = response.message || '';
-          localStorage.setItem('token', JSON.stringify(response.token));
+    const {
+      email,
+      password
+    } = this.loginForm.value;
+    this.authService.login(email, password).then(
+      (res: any) => {
+        if (res) {
+          this.message = 'You are successfully login'
           this.color = 'success';
-          this.presentToast('top');
           this.loginForm.reset();
+          this.presentToast('top');
           this.closeAuthDialog()
-        },
-        error => {
-          console.error('Error placing order:', error);
-          this.message = error;
+        } else {
+          this.message = 'Something went wrong! Please enter valid email or password';
           this.color = 'danger';
           this.presentToast('top');
         }
-      )
-    }
+      }
+    )
   }
 
 }

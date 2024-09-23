@@ -77,7 +77,7 @@ export class SideBarComponent implements OnInit {
   }
 
   //Check quantity and increase quantity
-  increaseQuantity(cartItem: Product) {
+  increaseQuantity(cartItem: any) {
     cartItem.quantity = (cartItem.quantity || 0) + 1;
     this.cartService.updateCartItem(cartItem);
     this.getTotalIncrement()
@@ -85,7 +85,7 @@ export class SideBarComponent implements OnInit {
   }
 
   //Check quantity and decrease quantity
-  decreaseQuantity(cartItem: Product) {
+  decreaseQuantity(cartItem: any) {
     if (cartItem.quantity && cartItem.quantity > 0) {
       cartItem.quantity -= 1;
       if (cartItem.quantity === 0) {
@@ -153,35 +153,34 @@ export class SideBarComponent implements OnInit {
 
 
   //Get total price when decrease quantity
-getTotalDecrement() {
-  let total = 0;
-  for (let i = 0; i < this.cartItems.length; i++) {
-    if (
-      this.cartItems[i].productPrice !== undefined &&
-      this.cartItems[i].quantity !== undefined &&
-      this.cartItems[i].discountedPrice !== undefined &&
-      +this.cartItems[i].discountedPrice! === 0
-    ) {
-      total +=
-        this.cartItems[i].productPrice! * this.cartItems[i].quantity!;
-    } else if (
-      this.cartItems[i].discountedPrice !== undefined &&
-      this.cartItems[i].quantity !== undefined &&
-      +this.cartItems[i].discountedPrice! !== 0
-    ) {
-      total +=
-        +this.cartItems[i].discountedPrice! * this.cartItems[i].quantity!;
+  getTotalDecrement() {
+    let total = 0;
+    for (let i = 0; i < this.cartItems.length; i++) {
+      if (
+        this.cartItems[i].productPrice !== undefined &&
+        this.cartItems[i].quantity !== undefined &&
+        this.cartItems[i].discountedPrice !== undefined &&
+        +this.cartItems[i].discountedPrice! === 0
+      ) {
+        total +=
+          this.cartItems[i].productPrice! * this.cartItems[i].quantity!;
+      } else if (
+        this.cartItems[i].discountedPrice !== undefined &&
+        this.cartItems[i].quantity !== undefined &&
+        +this.cartItems[i].discountedPrice! !== 0
+      ) {
+        total +=
+          +this.cartItems[i].discountedPrice! * this.cartItems[i].quantity!;
+      }
     }
-  }
-  console.log('Total:', total);
 
-  this.totalAmount = total;
-  localStorage.setItem('totalAmount', this.totalAmount.toString());
-}
+    this.totalAmount = total;
+    localStorage.setItem('totalAmount', this.totalAmount.toString());
+  }
 
 
   //remove from localStorage onClick
-  removeCart(cart: Product) {
+  removeCart(cart: any) {
     this.cartService.removeFromCart(cart);
     this.cartService.updateTotalAmountAndEmit();
   }

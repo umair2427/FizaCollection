@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ProductViewComponent } from '../../shared/components/product-view/product-view.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from 'src/app/shared/service/product.service';
-import { Product } from '../../shared/service/cart/Product'
-
 
 enum SortOption {
   SORT = 'sort',
@@ -14,40 +12,44 @@ enum SortOption {
   NAME_Z_TO_A = 'name2',
 }
 
-interface items {
-  id?: number;
-  name?: string;
-  data?: any;
-}
-
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.page.html',
   styleUrls: ['./shop.page.scss'],
 })
 export class ShopPage implements OnInit {
-  products: Product[] = [];
+  products: any[] = [];
+  filteredProducts: any[] = [];
+
   lowerValue: number = 0;
   upperValue: number = 100;
-  showPrice: boolean = true;
-  showCategory: boolean = true;
-  selectedCategory: string | undefined;
-  public SortOption = SortOption;
-  selectedSortOption: SortOption = SortOption.SORT;
-  clearFilter: boolean = false;
-  itemNotFound: boolean = false;
-  radioPrice = null;
-  search: any;
-  filteredProducts: Product[] = [];
-  categories: items[] = [];
-  loading = false;
   page = 1;
   pageSize = 9;
-  constructor(public dialog: MatDialog, private productService: ProductService,) { }
 
+  showPrice: boolean = true;
+  showCategory: boolean = true;
+  clearFilter: boolean = false;
+  itemNotFound: boolean = false;
+  loading: boolean = false;
+
+  selectedCategory: string | undefined;
+
+  public SortOption = SortOption;
+  selectedSortOption: SortOption = SortOption.SORT;
+
+  radioPrice = null;
+  search: any;
+  categories: string[] = ['Top', '2 Piece Suit', '3 Piece Suit', 'Flapper', 'Jeans', 'Capri', 'Trouser', 'Lehnga', 'Dupatta', 'Thigts'];
+
+  constructor(public dialog: MatDialog, private productService: ProductService) { }
 
   ngOnInit() {
     this.loadProducts();
+  }
+
+  ngOnDestroy() {
+    this.products = [];
+    this.filteredProducts = [];
   }
 
   loadData(event: any) {
@@ -57,16 +59,16 @@ export class ShopPage implements OnInit {
 
   private loadProducts(event?: any) {
     this.loading = true;
-    this.productService.getShopProducts(this.page, this.pageSize).subscribe(
-      (data: { totalCount: number, products: Product[] }) => {
+
+    this.productService.getShopProducts(this.page, this.pageSize, this.selectedCategory).subscribe(
+      (data: { totalProducts: number, products: any[] }) => {
         this.products = this.products.concat(data.products);
         this.filteredProducts = this.products;
         this.loading = false;
 
         if (event && event.target) {
           event.target.complete();
-
-          if (this.products.length >= data.totalCount) {
+          if (this.products.length >= data.totalProducts) {
             event.target.disabled = true;
           }
         }
@@ -74,7 +76,6 @@ export class ShopPage implements OnInit {
       (error: Error) => {
         console.error(error);
         this.loading = false;
-
         if (event && event.target) {
           event.target.complete();
         }
@@ -82,23 +83,14 @@ export class ShopPage implements OnInit {
     );
   }
 
-  openDialog(pro: Product) {
+  openDialog(pro: any) {
     this.dialog.open(ProductViewComponent, {
       width: '700px',
       height: '550px',
       data: pro,
-      disableClose: true
+      disableClose: true,
     });
   }
-
-  viewProductDetails(id: number) {
-    this.search = this.products.find((element: any) => {
-      return element.id === id;
-    });
-    this.openDialog(this.search)
-  }
-
-  // Sorting options
 
   // Sort function
   sortProducts(option: SortOption) {
@@ -108,7 +100,6 @@ export class ShopPage implements OnInit {
         this.filteredProducts = [...this.products];
         break;
       case SortOption.NEWEST:
-        if (this.filteredProducts) { }
         this.filteredProducts = this.filteredProducts.sort(
           (a, b) => (a.productDateTime?.getTime() || 0) - (b.productDateTime?.getTime() || 0)
         );
@@ -138,48 +129,31 @@ export class ShopPage implements OnInit {
     }
   }
 
-  //Price Range
+  // Price Range
   priceFilter(event: any) {
     const selectedPrice = parseInt(event.target.value, 10);
     this.filteredProducts = this.products.filter((product) => {
       this.clearFilter = true;
       this.itemNotFound = false;
-      return (product.productPrice || 0) >= selectedPrice && (product.productPrice || 0) < selectedPrice + 500;
+      return (product.productPrice || 0) >= selectedPrice && (product.productPrice || 0) < selectedPrice + 1000;
     });
-    if (this.filteredProducts.length === 0) {
-      this.itemNotFound = true
-    }
-  }
-
-  //Category
-  arrangeByCategory(event: any) {
-    const selectedCategoryId = event.value;
-    this.filteredProducts = this.products.filter((product) => {
-      this.clearFilter = true;
-      this.itemNotFound = false;
-
-      return product.categoryId === selectedCategoryId;
-    });
-
     if (this.filteredProducts.length === 0) {
       this.itemNotFound = true;
     }
   }
 
-  showCategories() {
-    this.productService.getCategories().subscribe((res: any) => {
-      this.categories = res.data;
-    },
-      (error) => {
-        console.error('Error fetching categories:', error);
-      })
+  // Category
+  arrangeByCategory(event: any) {
+    this.selectedCategory = event;  
+    this.page = 1;
+    this.products = [];
+    this.loadProducts();
   }
+
   reset() {
     this.clearFilter = false;
     this.radioPrice = null;
     this.itemNotFound = false;
     this.filteredProducts = [...this.products];
   }
-
-
 }

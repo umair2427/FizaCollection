@@ -10,49 +10,15 @@
   </h1>
   <form [formGroup]="registerForm" (ngSubmit)="formSubmit()">
     <div class="p-2">
-      <label class="block text-lg font-bold text-zinc-500">First Name<span class="text-red-500">*</span></label>
-      <input type="text" formControlName="firstName" placeholder="Enter your first name"
+      <label class="block text-lg font-bold text-zinc-500">Name<span class="text-red-500">*</span></label>
+      <input type="text" formControlName="name" placeholder="Enter your name"
         class="w-full focus:outline-none border border-zinc-400 p-1 placeholder-zinc-500 rounded-sm" />
       <div *ngIf="
-          f['firstName'].invalid &&
-          (f['firstName'].dirty || f['firstName'].touched)
+          f['name'].invalid &&
+          (f['name'].dirty || f['name'].touched)
         " class="text-xs text-red-500">
-        <div *ngIf="f['firstName'].errors?.['required']">
-          First Name is required.
-        </div>
-      </div>
-    </div>
-    <div class="p-2">
-      <label class="block text-lg font-bold text-zinc-500">Last Name<span class="text-red-500">*</span></label>
-      <input type="text" formControlName="lastName" placeholder="Enter your last name"
-        class="w-full focus:outline-none border border-zinc-400 p-1 placeholder-zinc-500 rounded-sm" />
-      <div *ngIf="
-          f['lastName'].invalid &&
-          (f['lastName'].dirty || f['lastName'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['lastName'].errors?.['required']">
-          Last Name is required.
-        </div>
-      </div>
-    </div>
-    <div class="p-2">
-      <label class="block text-lg font-bold text-zinc-500">Alter Email<span class="text-red-500">*</span></label>
-      <input type="email" formControlName="alterEmail" placeholder="Enter your email"
-        class="w-full focus:outline-none border border-zinc-400 p-1 placeholder-zinc-500 rounded-sm" />
-      <div *ngIf="
-          f['alterEmail'].invalid &&
-          (f['alterEmail'].dirty || f['alterEmail'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['alterEmail'].errors?.['required']">
-          Alter Email is required.
-        </div>
-      </div>
-      <div *ngIf="
-          f['alterEmail'].invalid &&
-          (f['alterEmail'].dirty || f['alterEmail'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['alterEmail'].errors?.['alterEmail']">
-          Please enter a valid email address.
+        <div *ngIf="f['name'].errors?.['required']">
+          Name is required.
         </div>
       </div>
     </div>
@@ -82,51 +48,6 @@
         </div>
       </div>
     </div>
-    <div class="p-2 relative">
-      <label class="block text-lg font-bold text-zinc-500">Password<span class="text-red-500">*</span></label>
-      <input [type]="ismyTextFieldType ? 'text' : 'password'" placeholder="Enter your password"
-        formControlName="password"
-        class="w-full focus:outline-none border border-zinc-400 p-1 placeholder-zinc-500 rounded-sm" />
-      <div *ngIf="
-          f['password'].invalid &&
-          (f['password'].dirty || f['password'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['password'].errors?.['required']">
-          Password is required.
-        </div>
-        <div *ngIf="f['password'].errors?.['minlength']">
-          Password must be at least minimum 8 characters long.
-        </div>
-      </div>
-      <ion-icon [name]="ismyTextFieldType ? 'eye-off' : 'eye'"
-        class="text-zinc-500 text-lg absolute top-11 right-5 cursor-pointer"
-        (click)="togglemyPasswordFieldType()"></ion-icon>
-    </div>
-    <div class="p-2 relative">
-      <label class="block text-lg font-bold text-zinc-500">Confirm Password<span class="text-red-500">*</span></label>
-      <input [type]="confirmPasswordField ? 'text' : 'password'" formControlName="confirmPassword"
-        placeholder="Enter your confirm password"
-        class="w-full focus:outline-none border border-zinc-400 p-1 placeholder-zinc-500 rounded-sm" />
-      <div *ngIf="
-          f['confirmPassword'].invalid &&
-          (f['confirmPassword'].dirty || f['confirmPassword'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['confirmPassword'].errors?.['required']">
-          Confirm Password is required.
-        </div>
-      </div>
-      <div *ngIf="
-          f['confirmPassword'].invalid &&
-          (f['confirmPassword'].dirty || f['confirmPassword'].touched)
-        " class="text-xs text-red-500">
-        <div *ngIf="f['confirmPassword'].errors?.['matchValidator']">
-          Passwords did not match.
-        </div>
-      </div>
-      <ion-icon [name]="confirmPasswordField ? 'eye-off' : 'eye'"
-        class="text-zinc-500 text-lg absolute top-11 right-5 cursor-pointer"
-        (click)="confirmPasswordToggle()"></ion-icon>
-    </div>
     <div class="p-2">
       <label class="block text-lg font-bold text-zinc-500">Phone Number<span class="text-red-500">*</span></label>
       <input type="text" formControlName="number" placeholder="Enter your number"
@@ -145,13 +66,11 @@
       </div>
     </div>
     <div class="w-full p-2">
-      <button type="submit" [disabled]="registerForm.invalid || loading"
-        class="bg-zinc-600 text-white font-bold py-2 w-full hover:bg-zinc-500 relative">
-        <span *ngIf="!loading">Register</span>
-        <div *ngIf="loading" class="loader absolute inset-0 flex items-center justify-center">
-          <ion-spinner name="crescent"></ion-spinner>
-        </div>
-      </button>
+      <button type="submit" [disabled]="registerForm.invalid || (isLoading$ | async)"
+      class="bg-zinc-600 text-white font-bold py-2 w-full hover:bg-zinc-500 flex items-center justify-center disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
+      <span class="mr-2">Register</span>
+      <ion-spinner class="text-white" *ngIf="(isLoading$ | async)" name="crescent"></ion-spinner>
+    </button>
     </div>
     <div class="text-center px-1 mb-5">
       <span class="text-zinc-600 font-sans">Do you have an account?</span>

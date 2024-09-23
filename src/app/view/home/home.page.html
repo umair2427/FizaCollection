@@ -43,12 +43,12 @@
           [class.hidden]="i !== 1 && showDetails[i]"
           [routerLink]="i === 1 ? '/sale' : null"
         >
-          {{ card.productName }}
+          {{ card.productName.trim().slice(0, 6) }}
         </h5>
         <div
-          *ngIf="showDetails[i] && i !== 1 && card.id !== undefined"
+          *ngIf="showDetails[i] && i !== 1 && card._id !== undefined"
           class="p-3 bg-zinc-800"
-          (click)="viewSingleProduct(card.id)"
+          (click)="viewSingleProduct(card._id)"
         >
           <h5 class="absolute bottom-5 left-32 text-zinc-300 text-base cursor-pointer font-sans tracking-wider hover:text-zinc-50">View Details</h5>
         </div>

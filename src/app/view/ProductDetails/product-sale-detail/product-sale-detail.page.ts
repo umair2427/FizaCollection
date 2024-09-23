@@ -19,15 +19,20 @@ interface items {
   styleUrls: ['./product-sale-detail.page.scss'],
 })
 export class ProductSaleDetailPage implements OnInit {
-  productId!: number;
-  product!: Product;
+  productId!: string;
+  preRoute: string = '';
+
+  product!: any;
   productView: any;
+
   showProductInfo: boolean = true;
   showProductReturnPolicy: boolean = true;
-  preRoute: string = '';
   loader: boolean = true;
-  colors: items[] = [];
+
+  colors: string[] = ['White', 'Green', 'Blue', 'Black', 'Mehroon', 'Pink', 'Pista', 'Purple', 'Henna(Mehndi)', 'Yellow', 'Orange', 'Master', 'Brown', 'Navy Blue'];
+
   cartForm!: FormGroup
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,66 +44,59 @@ export class ProductSaleDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.cartForm = this._fb.group({
-      color: ['', [Validators.required]],
+      color: [null, [Validators.required]],
       quantity: [1]
     })
+
+    this.productId = this.route.snapshot.paramMap.get('id') || '';
+
     this.fetchProductDetails();
-    this.getColors();
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.cartForm.controls; }
 
   fetchProductDetails(): void {
-    this.route.params.subscribe(params => {
-      this.productId = +params['id'];
-      if (this.productId) {
-        this.productService.getProductById(this.productId).subscribe(
-          (product: any) => {
-            this.product = product.product;
-            this.loader = false;
-          },
-          error => {
-            console.error('Error fetching product details:', error);
-          }
-        );
-      }
-    });
-  }
-
-  getColors(): void {
-    this.productService.getColors().subscribe(
-      (data: items) => {
-        this.colors = data.data;
+    this.productService.getProductById(this.productId).subscribe(
+      (product: any) => {
+        this.product = product.product;
+        this.loader = false;
       },
-      (error) => {
-        console.error('Error fetching data from backend:', error);
+      error => {
+        console.error('Error fetching product details:', error);
       }
     );
   }
 
-  addToCart(product: Product) {
-    if(this.cartForm.invalid){
+  addToCart(product: any) {
+    if (this.cartForm.invalid) {
       // Mark all form controls as touched to display the validation errors
       Object.values(this.cartForm.controls).forEach(control => {
         control.markAsTouched();
       });
-    } else{
-      product.colorId = this.cartForm.get('color')?.value;
+    } else {
+      product.color = this.cartForm.get('color')?.value;
       product.quantity = this.cartForm.get('quantity')?.value;
       this.cartService.addToCart(product)
       this.openDialog(product);
     }
   }
 
-  addToCartBuy(product: Product){
-    product.colorId = this.cartForm.get('color')?.value || 1;
+  addToCartBuy(product: any) {
+    if (this.cartForm.invalid) {
+      // Mark all form controls as touched to display the validation errors
+      Object.values(this.cartForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+    } else {
+      product.color = this.cartForm.get('color')?.value || 1;
       product.quantity = this.cartForm.get('quantity')?.value || 1;
       this.cartService.addToCart(product);
       this.router.navigate(['payment-info']);
+    }
   }
 
-  openDialog(product: Product) {
+  openDialog(product: any) {
     this.dialog.open(SideBarComponent, {
       width: '400px',
       height: 'auto',
@@ -109,16 +107,6 @@ export class ProductSaleDetailPage implements OnInit {
     });
   }
 
-  countIncrement(product: Product) {
-    if (product && product.quantity !== undefined && product.quantity > 0) {
-      product.quantity++;
-    }
-  }
-  countDecrement(product: Product) {
-    if (product && product.quantity !== undefined && product.quantity > 0) {
-      product.quantity--;
-    }
-  }
   validateNumber(event: any) {
     const keyCode = event.keyCode;
     const excludedKeys = [8, 37, 39, 46];
