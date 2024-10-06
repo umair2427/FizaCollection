@@ -25,6 +25,7 @@ interface items {
 export class ProductViewComponent implements OnInit {
   productData: any | undefined;
   colors: string[] = [];
+  sizes: string[] = [];
   defaultProduct!: any;
   quantity!: number;
   currentColor!: number;
@@ -40,7 +41,8 @@ export class ProductViewComponent implements OnInit {
 
   ) {
     this.productData = this.data !== undefined ? this.data : undefined;
-    this.colors =  this.productData.colors
+    this.colors =  this.productData.colors;
+    this.sizes =  this.productData.sizes;
 
   }
   customOptions!: OwlOptions;
@@ -65,6 +67,7 @@ export class ProductViewComponent implements OnInit {
     }, 300);
     this.cartForm = this._fb.group({
       color: [null, [Validators.required]],
+      size: [null, [Validators.required]],
       quantity: [1]
     })
   }
@@ -105,6 +108,7 @@ export class ProductViewComponent implements OnInit {
       });
     } else {
       product.color = this.cartForm.get('color')?.value;
+      product.size = this.cartForm.get('size')?.value;
       product.quantity = this.cartForm.get('quantity')?.value;
       this.cartService.addToCart(product);
       this.openDialog();

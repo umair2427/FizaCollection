@@ -48,7 +48,23 @@
               </div>
             </div>
           </div>
+          <div class="w-full my-2">
+            <label class="text-zinc-400 font-sans">Size</label>
+            <ng-select placeholder="Select--"
+              class="border rounded-xl text-xs cursor-pointer text-gray-800 placeholder-gray-400" bindLabel="name"
+              bindValue="id" [items]="sizes" formControlName="size">
+            </ng-select>
+            <div *ngIf="
+          f['size'].invalid &&
+          (f['size'].dirty || f['size'].touched)
+        " class="text-xs text-red-500">
+              <div *ngIf="f['size'].errors?.['required']">
+                Size is not selected.
+              </div>
+            </div>
+          </div>
         </div>
+        
         <div class="mt-2">
           <label class="block text-zinc-400 font-sans pb-2">Quantity</label>
           <input type="number" value="1" min="1" (keydown)="validateNumber($event)" formControlName="quantity"

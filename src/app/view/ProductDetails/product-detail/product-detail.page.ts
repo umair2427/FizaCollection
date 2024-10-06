@@ -20,7 +20,8 @@ interface items {
   styleUrls: ['./product-detail.page.scss'],
 })
 export class ProductDetailPage implements OnInit {
-  colors: string[] = ['White', 'Green', 'Blue', 'Black', 'Mehroon', 'Pink', 'Pista', 'Purple', 'Henna(Mehndi)', 'Yellow', 'Orange', 'Master', 'Brown', 'Navy Blue'];
+  colors: string[] = [];
+  sizes: string[] = [];
 
   productId!: string;
   getId!: number;
@@ -47,6 +48,7 @@ export class ProductDetailPage implements OnInit {
   ngOnInit(): void {
     this.cartForm = this._fb.group({
       color: [null, [Validators.required]],
+      size: [null, [Validators.required]],
       quantity: [1]
     })
     this.productId = this.route.snapshot.paramMap.get('id') || '';
@@ -60,6 +62,8 @@ export class ProductDetailPage implements OnInit {
     this.productService.getProductById(this.productId).subscribe(
       (product: any) => {
         this.product = product.product;
+        this.colors = this.product.colors;
+        this.sizes = this.product.sizes;
         this.loader = false;
       },
       error => {
@@ -76,6 +80,7 @@ export class ProductDetailPage implements OnInit {
       });
     } else {
       product.color = this.cartForm.get('color')?.value;
+      product.size = this.cartForm.get('size')?.value;
       product.quantity = this.cartForm.get('quantity')?.value;
       this.cartService.addToCart(product)
       this.openDialog(product);
@@ -90,6 +95,7 @@ export class ProductDetailPage implements OnInit {
       });
     } else {
       product.color = this.cartForm.get('color')?.value || 1;
+      product.size = this.cartForm.get('size')?.value || 1;
       product.quantity = this.cartForm.get('quantity')?.value || 1;
       this.cartService.addToCart(product);
       this.router.navigate(['payment-info']);

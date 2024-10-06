@@ -237,6 +237,7 @@ export class PaymentInfoPage implements OnInit {
     const cartDetails = this.cartItems.map((item: any) => {
       return {
         color: item.color,
+        size: item.size,
         quantity: item.quantity,
         productName: item.productName,
         productMainImage: item.productMainImage

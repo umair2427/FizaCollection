@@ -36,19 +36,34 @@
                 </div>
               </div>
             </div>
+            <div class="w-full my-2">
+              <label class="text-zinc-400 font-sans">Size</label>
+              <ng-select placeholder="Select--"
+                class="border rounded-xl text-xs cursor-pointer text-gray-800 placeholder-gray-400 lg:w-2/3"
+                bindLabel="name" bindValue="id" [items]="sizes" formControlName="size">
+              </ng-select>
+              <div *ngIf="
+          f['size'].invalid &&
+          (f['size'].dirty || f['size'].touched)
+        " class="text-xs text-red-500">
+                <div *ngIf="f['size'].errors?.['required']">
+                  Size is not selected.
+                </div>
+              </div>
+            </div>
           </div>
           <div class="mt-2">
             <label class="block text-zinc-400 font-sans pb-2">Quantity</label>
             <input type="number" value="1" min="1" (keydown)="validateNumber($event)" formControlName="quantity"
               class="border border-zinc-400 lg:w-28 px-2 py-1 focus:outline-none text-zinc-500" />
           </div>
-          <div class="mt-8">
+          <div class="mt-6">
             <button type="submit"
               class="customButton font-sans w-full lg:w-3/4 transition hover:text-zinc-400 duration-300">
               Add to Cart
             </button>
           </div>
-          <div class="mt-8">
+          <div class="mt-6">
             <button type="button" (click)="addToCartBuy(product)"
               class="bg-zinc-900 text-white w-full lg:w-3/4 py-3 transition hover:bg-zinc-800 hover:text-zinc-200 duration-300">
               Buy Now
