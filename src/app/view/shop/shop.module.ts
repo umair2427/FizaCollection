@@ -10,6 +10,8 @@ import { ShopPage } from './shop.page';
 import { SharedModule } from '../shared.module';
 import {MatSelectModule} from '@angular/material/select';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ShopPageRoutingModule,
     SharedModule,
     MatSelectModule,
-    NgSelectModule
+    NgSelectModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule
   ],
   declarations: [ShopPage]
 })

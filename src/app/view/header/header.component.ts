@@ -1,11 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { Subject, Subscription, debounceTime, distinctUntilChanged, filter, fromEvent, map, skipWhile, switchMap, take, tap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, filter, fromEvent, map, skipWhile, take, tap } from 'rxjs';
 import { AuthComponent } from 'src/app/shared/components/auth/auth.component';
 import { ProfileComponent } from 'src/app/shared/components/profile/profile.component';
-import { RegisterComponent } from 'src/app/shared/components/register/register.component';
 import { SideBarComponent } from 'src/app/shared/components/side-bar/side-bar.component';
 import { AuthService } from 'src/app/shared/service/auth/auth.service';
 import { Product } from 'src/app/shared/service/cart/Product';
@@ -27,7 +26,8 @@ export class HeaderComponent implements OnInit {
     public dialog: MatDialog,
     private authService: AuthService,
     private productService: ProductService,
-    private navCtrl: NavController,) { }
+    private navCtrl: NavController,
+    private router: Router) { }
   ngOnInit() { }
 
   ngAfterViewInit(): void {
@@ -55,7 +55,7 @@ export class HeaderComponent implements OnInit {
       .subscribe();
   }
 
- 
+
   productDetail(product: any) {
     if (product && product.discountedPrice !== undefined && product.productDiscount !== 0) {
       this.navCtrl.navigateForward(`/product-sale-detail/${product._id}`);
@@ -96,6 +96,11 @@ export class HeaderComponent implements OnInit {
       position: { right: '0px', top: '70px' },
       panelClass: ['animate__animated', 'animate__slideInRight'],
     });
+  }
+
+  navigateHeader(route: string) {
+    console.log("Router", route)
+    this.router.navigate([`/${route}`]);
   }
 
 

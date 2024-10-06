@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductViewComponent } from '../../shared/components/product-view/product-view.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from 'src/app/shared/service/product.service';
+import { PageEvent } from '@angular/material/paginator';
 
 enum SortOption {
   SORT = 'sort',
@@ -24,7 +25,8 @@ export class ShopPage implements OnInit {
   lowerValue: number = 0;
   upperValue: number = 100;
   page = 1;
-  pageSize = 9;
+  pageSize = 12; 
+  totalProducts = 0; 
 
   showPrice: boolean = true;
   showCategory: boolean = true;
@@ -39,7 +41,10 @@ export class ShopPage implements OnInit {
 
   radioPrice = null;
   search: any;
-  categories: string[] = ['Top', '2 Piece Suit', '3 Piece Suit', 'Flapper', 'Jeans', 'Capri', 'Trouser', 'Lehnga', 'Dupatta', 'Thigts'];
+  categories: string[] = [
+    'Top', '2 Piece Suit', '3 Piece Suit', 'Flapper', 'Jeans', 'Capri', 
+    'Trouser', 'Lehnga', 'Dupatta', 'Thigts'
+  ];
 
   constructor(public dialog: MatDialog, private productService: ProductService) { }
 
@@ -47,40 +52,29 @@ export class ShopPage implements OnInit {
     this.loadProducts();
   }
 
-  ngOnDestroy() {
-    this.products = [];
-    this.filteredProducts = [];
-  }
-
-  loadData(event: any) {
-    this.page++;
-    this.loadProducts(event);
-  }
-
-  private loadProducts(event?: any) {
+  // Load products based on current page, pageSize, and selected category
+  private loadProducts() {
     this.loading = true;
 
     this.productService.getShopProducts(this.page, this.pageSize, this.selectedCategory).subscribe(
       (data: { totalProducts: number, products: any[] }) => {
-        this.products = this.products.concat(data.products);
+        this.products = data.products;
         this.filteredProducts = this.products;
+        this.totalProducts = data.totalProducts;
         this.loading = false;
-
-        if (event && event.target) {
-          event.target.complete();
-          if (this.products.length >= data.totalProducts) {
-            event.target.disabled = true;
-          }
-        }
       },
       (error: Error) => {
         console.error(error);
         this.loading = false;
-        if (event && event.target) {
-          event.target.complete();
-        }
       }
     );
+  }
+
+  // Handle page change event for paginator
+  onPageChange(event: PageEvent) {
+    this.page = event.pageIndex + 1; 
+    this.pageSize = event.pageSize;
+    this.loadProducts(); 
   }
 
   openDialog(pro: any) {
@@ -144,9 +138,7 @@ export class ShopPage implements OnInit {
 
   // Category
   arrangeByCategory(event: any) {
-    this.selectedCategory = event;  
-    this.page = 1;
-    this.products = [];
+    this.selectedCategory = event;
     this.loadProducts();
   }
 

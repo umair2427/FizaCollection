@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  url: 'https://fiza-noor-collection.vercel.app/api/',
+  // url: 'https://fiza-noor-collection.vercel.app/api/',
+  url: 'http://localhost:3000/api/',
   firebaseConfig: {
     apiKey: "AIzaSyDtewLNsNhuBgE_8yrRMOEBxYRoCJ_mVHQ",
     authDomain: "fizanoorcollection.firebaseapp.com",

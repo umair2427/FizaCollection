@@ -24,7 +24,7 @@ interface items {
 })
 export class ProductViewComponent implements OnInit {
   productData: any | undefined;
-  colors: string[] = ['White', 'Green', 'Blue', 'Black', 'Mehroon', 'Pink', 'Pista', 'Purple', 'Henna(Mehndi)', 'Yellow', 'Orange', 'Master', 'Brown', 'Navy Blue'];
+  colors: string[] = [];
   defaultProduct!: any;
   quantity!: number;
   currentColor!: number;
@@ -40,6 +40,7 @@ export class ProductViewComponent implements OnInit {
 
   ) {
     this.productData = this.data !== undefined ? this.data : undefined;
+    this.colors =  this.productData.colors
 
   }
   customOptions!: OwlOptions;
@@ -53,7 +54,7 @@ export class ProductViewComponent implements OnInit {
         pullDrag: true,
         dots: false,
         navSpeed: 700,
-        navText: [`<img src="${this.productData?.productGalleryImageOne}" width="20">`, `<img src="${this.productData?.productGalleryImageTwo}" width="20">`],
+        navText: this.productData?.productGalleryImages.map((image: any) => `<img src="${image}" width="20">`),
         responsive: {
           0: {
             items: 1

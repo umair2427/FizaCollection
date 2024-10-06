@@ -39,11 +39,11 @@
         (mouseleave)="showDetails[i] = !showDetails[i]"
       >
         <h5
-          [ngClass]="i === 1 ? 'absolute top-2 left-12 sm:left-[120px] md:left-[40px] lg:left-[63px] xl:left-24 text-6xl text-zinc-700 font-serif cursor-pointer transition hover:text-zinc-500 duration-300' : 'text-base tracking-tight text-white font-sans cursor-pointer'"
+          [ngClass]="i === 1 ? 'absolute top-2 left-12 sm:left-[120px] md:left-[40px] lg:left-[63px] xl:left-36 text-6xl text-zinc-700 font-serif cursor-pointer transition hover:text-zinc-500 duration-300' : 'text-base tracking-tight text-white font-sans cursor-pointer'"
           [class.hidden]="i !== 1 && showDetails[i]"
           [routerLink]="i === 1 ? '/sale' : null"
         >
-          {{ card.productName.trim().slice(0, 6) }}
+          {{ i === 1 ? 'Sale' : card.productName }}
         </h5>
         <div
           *ngIf="showDetails[i] && i !== 1 && card._id !== undefined"
